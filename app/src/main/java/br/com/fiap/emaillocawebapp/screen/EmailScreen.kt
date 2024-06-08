@@ -105,7 +105,6 @@ fun EmailsScreen(navController: NavController, emailDao: EmailDao) {
             OutlinedTextField(
                 value = query,
                 onValueChange = { query = it },
-                label = { Text("Pesquisar por Assunto ou Remetente") },
                 leadingIcon = {
                     IconButton(onClick = {
                         // Ao clicar na lupa, realizar a pesquisa
@@ -180,7 +179,7 @@ fun StarIcon(isFavorite: Boolean, onClick: () -> Unit) {
     val starIcon = if (isFavorite) {
         painterResource(id = R.drawable.star)
     } else {
-        painterResource(id = R.drawable.star_unfilled)
+        painterResource(id = R.drawable.star_full_com)
     }
 
     Image(
