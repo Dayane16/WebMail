@@ -19,8 +19,6 @@ import br.com.fiap.emaillocawebapp.screen.EmailDetailScreen
 import br.com.fiap.emaillocawebapp.screen.EmailsScreen
 import br.com.fiap.emaillocawebapp.screen.WelcomeScreen
 
-
-
 class MainActivity : ComponentActivity() {
     private lateinit var emailDao: EmailDao
 
@@ -39,12 +37,13 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Composable
-    fun MyApp(emailDao: EmailDao){
+    fun MyApp(emailDao: EmailDao) {
         val navController = rememberNavController()
 
         NavHost(navController = navController, startDestination = "welcome") {
             composable("welcome") {
-                WelcomeScreen {
+                WelcomeScreen { email, password ->
+                    // Faça a navegação ou a ação necessária com email e password
                     navController.navigate("emails")
                 }
             }
@@ -71,6 +70,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 
 
