@@ -24,7 +24,6 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,7 +35,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -55,7 +53,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import br.com.fiap.emaillocawebapp.R
 import br.com.fiap.emaillocawebapp.dao.EmailDao
 import br.com.fiap.emaillocawebapp.data.EmailEntity
-import br.com.fiap.emaillocawebapp.ui.theme.Black
+import br.com.fiap.emaillocawebapp.ui.theme.DarkBlue
 import br.com.fiap.emaillocawebapp.ui.theme.Gray
 import br.com.fiap.emaillocawebapp.ui.theme.Red80
 import kotlinx.coroutines.CoroutineScope
@@ -69,7 +67,6 @@ fun EmailsScreen(navController: NavController, emailDao: EmailDao) {
     val emailsState = remember { mutableStateOf<List<EmailEntity>>(emptyList()) }
     val allEmailsState = remember { mutableStateOf<List<EmailEntity>>(emptyList()) }
 
-    // Função para pesquisar e-mails
     fun searchEmails() {
         CoroutineScope(Dispatchers.IO).launch {
             val emails = emailDao.searchEmails(query)
@@ -79,7 +76,7 @@ fun EmailsScreen(navController: NavController, emailDao: EmailDao) {
         }
     }
 
-    // Função para deletar um email
+
     fun deleteEmail(email: EmailEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             emailDao.deleteEmail(email)
@@ -88,7 +85,7 @@ fun EmailsScreen(navController: NavController, emailDao: EmailDao) {
         }
     }
 
-    // Função para carregar todos os emails
+
     fun loadAllEmails() {
         CoroutineScope(Dispatchers.IO).launch {
             val emails = emailDao.getAllEmails()
@@ -141,13 +138,6 @@ fun EmailsScreen(navController: NavController, emailDao: EmailDao) {
             }
 
             Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = { navController.navigate("composeEmail") },
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                Text("Escrever Novo E-mail")
-            }
         }
     }
 }
@@ -163,7 +153,7 @@ fun TopAppBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .shadow(elevation = 4.dp, shape = RectangleShape) // Somente elevação
+            .shadow(elevation = 4.dp, shape = RectangleShape)
     ) {
         Column {
             Box(
@@ -185,7 +175,7 @@ fun TopAppBar(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color.Gray)
+                        .background(Red80)
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.profile_placeholder),
@@ -333,7 +323,6 @@ fun EmailListItem(email: EmailEntity, onItemClick: () -> Unit, onDeleteClick: ()
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // Coluna com informações do email
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -368,46 +357,48 @@ fun ExpandableFabMenu(navController: NavController) {
     ) {
         FloatingActionButton(
             onClick = { expanded = !expanded },
-            backgroundColor = Red80 // Cor do FAB principal
+            backgroundColor = DarkBlue
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.plus),
                 contentDescription = "Expandir Menu",
-                modifier = Modifier.size(24.dp) // Ajuste o tamanho aqui
+                modifier = Modifier.size(24.dp),
+                tint = Red80
             )
         }
 
         if (expanded) {
             Box(
                 modifier = Modifier
-                    .padding(bottom = 55.dp) // Ajuste para posicionar acima do FAB principal
+                    .padding(bottom = 60.dp)
                     .background(Gray)
-                    .width(170.dp) // Largura máxima do quadrado pequeno
+                    .width(170.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
-                    CustomMenuItem(
+                    CustomMenuItemWithCircle(
                         text = "Enviar Email",
-                        icon = painterResource(id = R.drawable.plus),
+                        icon = painterResource(id = R.drawable.ic_send),
                         onClick = { navController.navigate("composeEmail") },
-                        contentColor = Black
-
+                        contentColor = Red80,
+                        textColor = Color.Black
                     )
                     Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
-                    CustomMenuItem(
+                    CustomMenuItemWithCircle(
                         text = "LocalChat",
-                        icon = painterResource(id = R.drawable.plus),
-                        onClick = { /* Navegar para o chat */ },
-                        contentColor = Black
+                        icon = painterResource(id = R.drawable.chat),
+                        onClick = { navController.navigate("chatList") },
+                        contentColor = Red80,
+                        textColor = Color.Black
                     )
                     Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.padding(vertical = 8.dp))
-                    CustomMenuItem(
+                    CustomMenuItemWithCircle(
                         text = "Chat Bot",
-                        icon = painterResource(id = R.drawable.plus),
-                        onClick = { /* Navegar para o chatbot */ },
-                        contentColor = Black
+                        icon = painterResource(id = R.drawable.roboweb),
+                        onClick = { navController.navigate("chatBot") },
+                        contentColor = Red80,
+                        textColor = Color.Black
                     )
                 }
             }
@@ -416,24 +407,34 @@ fun ExpandableFabMenu(navController: NavController) {
 }
 
 @Composable
-fun CustomMenuItem(
+fun CustomMenuItemWithCircle(
     text: String,
     icon: Painter,
     onClick: () -> Unit,
-    contentColor: Color
+    contentColor: Color,
+    textColor: Color
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.clickable { onClick() }.padding(horizontal = 16.dp, vertical = 8.dp)
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
-        Icon(
-            painter = icon,
-            contentDescription = text,
-            modifier = Modifier.size(18.dp), // Tamanho do ícone
-            tint = contentColor // Cor do ícone
-        )
+        Box(
+            modifier = Modifier
+                .size(30.dp)
+                .background(DarkBlue, shape = CircleShape)
+                .padding(4.dp)
+        ) {
+            Icon(
+                painter = icon,
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(24.dp)
+            )
+        }
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text, color = contentColor)
+        Text(text, color = textColor)
     }
 }
 

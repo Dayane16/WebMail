@@ -14,11 +14,13 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import br.com.fiap.emaillocawebapp.dao.EmailDao
 import br.com.fiap.emaillocawebapp.data.EmailDatabase
+import br.com.fiap.emaillocawebapp.screen.Chat
+import br.com.fiap.emaillocawebapp.screen.ChatBotScreen
+import br.com.fiap.emaillocawebapp.screen.ChatListScreen
 import br.com.fiap.emaillocawebapp.screen.ComposeEmailScreen
 import br.com.fiap.emaillocawebapp.screen.EmailDetailScreen
 import br.com.fiap.emaillocawebapp.screen.EmailsScreen
 import br.com.fiap.emaillocawebapp.screen.WelcomeScreen
-
 class MainActivity : ComponentActivity() {
     private lateinit var emailDao: EmailDao
 
@@ -65,6 +67,35 @@ class MainActivity : ComponentActivity() {
                     val arguments = requireNotNull(backStackEntry.arguments)
                     val emailId = arguments.getLong("emailId")
                     EmailDetailScreen(emailDao = emailDao, navController = navController, emailId = emailId)
+                }
+            )
+            composable(
+                "chatList",
+                content = {
+                    ChatListScreen(navController = navController)
+                }
+            )
+            composable(
+                "chat/{conversationId}/{conversationName}/{lastMessage}",
+                arguments = listOf(
+                    navArgument("conversationId") { type = NavType.StringType },
+                    navArgument("conversationName") { type = NavType.StringType },
+                    navArgument("lastMessage") { type = NavType.StringType } // Tipo pode variar conforme sua implementação
+                ),
+                content = { backStackEntry ->
+                    val conversationId = backStackEntry.arguments?.getString("conversationId")
+                    val conversationName = backStackEntry.arguments?.getString("conversationName")
+                    val lastMessage = backStackEntry.arguments?.getString("lastMessage")
+
+                    if (conversationId != null && conversationName != null && lastMessage != null) {
+                        Chat(navController = navController, conversationId = conversationId, conversationName = conversationName, lastMessage = lastMessage)
+                    }
+                }
+            )
+            composable(
+                "chatBot",
+                content = {
+                    ChatBotScreen(navController = navController)
                 }
             )
         }

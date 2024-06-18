@@ -81,7 +81,8 @@ fun ComposeEmailScreen(navController: NavController, emailDao: EmailDao) {
                     .fillMaxWidth()
                     .padding(bottom = 2.dp),
                 textStyle = MaterialTheme.typography.body1.copy(color = Color.Black),
-                singleLine = true
+                singleLine = true,
+
             )
             Divider(modifier = Modifier.padding(vertical = 4.dp))
             TextField(
